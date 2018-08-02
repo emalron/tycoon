@@ -3,7 +3,7 @@ var gui = new dat.GUI();
 
 function preload() {
     let g = game;
-    g.load.image('bg', 'assets/images/restaurant.png');
+    g.load.image('bg', 'assets/images/background.png');
     g.load.image('cook', 'assets/images/cook.png');
     g.load.image('customer', 'assets/images/customer.png');
     g.load.image('minigame', 'assets/images/button1.png');
@@ -18,7 +18,7 @@ function create() {
     
     g.cook = g.add.sprite(0.3*g.world.width, 0.5*g.world.height, 'cook');
     g.cook.anchor.setTo(.5);
-    g.customer = g.add.sprite(0.8*g.world.width, 0.5*g.world.height, 'customer');
+    g.customer = g.add.sprite(0.7*g.world.width, 0.6*g.world.height, 'customer');
     g.customer.anchor.setTo(.5);
     g.mini = g.add.sprite(0.9*g.world.width-130, 0.9*g.world.height, 'minigame');
     g.mini.anchor.setTo(.5);
