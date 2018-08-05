@@ -8,6 +8,7 @@ function preload() {
     g.load.image('customer', 'assets/images/customer.png');
     g.load.image('minigame', 'assets/images/button1.png');
     g.load.image('cooking', 'assets/images/button2.png');
+    g.load.image('hiring', 'assets/images/button3.png');
 }
 
 function create() {
@@ -16,29 +17,34 @@ function create() {
     // draw entities
     g.background = g.add.sprite(0,0,'bg');
     
-    g.cook = g.add.sprite(0.3*g.world.width, 0.5*g.world.height, 'cook');
-    g.cook.anchor.setTo(.5);
+    // g.cook = g.add.sprite(0.3*g.world.width, 0.5*g.world.height, 'cook');
+    // g.cook.anchor.setTo(.5);
     g.customer = g.add.sprite(0.7*g.world.width, 0.6*g.world.height, 'customer');
     g.customer.anchor.setTo(.5);
     g.mini = g.add.sprite(0.9*g.world.width-130, 0.9*g.world.height, 'minigame');
     g.mini.anchor.setTo(.5);
     g.cooking = g.add.sprite(0.9*g.world.width, 0.9*g.world.height, 'cooking');
     g.cooking.anchor.setTo(.5);
-        
+    g.hiring = g.add.sprite(0.9*g.world.width-260, 0.9*g.world.height, 'hiring');
+    g.hiring.anchor.setTo(.5);
+            
     // set parameters
-    g.cook.params = {happy: 100, state: 'idle'};
+    // g.cook.params = {happy: 100, state: 'idle'};
     g.customer.params = {endurance: 100};
     
     // set input
-    g.cook.inputEnabled = true;
-    g.cook.events.onInputDown.add(cookWork, this);
-    g.cook.input.enableDrag(true);
+    // g.cook.inputEnabled = true;
+    // g.cook.events.onInputDown.add(cookWork, this);
+    // g.cook.input.enableDrag(true);
     g.mini.inputEnabled = true;
     g.mini.events.onInputDown.add(setState, this);
     g.cooking.inputEnabled = true;
     g.cooking.events.onInputDown.add(setState, this);
     g.customer.inputEnabled = true;
     g.customer.events.onInputDown.add(serving, this);
+    g.hiring.inputEnabled = true;
+    g.hiring.events.onInputDown.add(hireCook, this);
+    
     
     // set timer event
     g.time.events.loop(1000, function() {
@@ -59,8 +65,29 @@ function create() {
     gui.add(world, 'ingredient', 0, 10000).listen();
     gui.add(world, 'food', 0, 10).listen();
     gui.add(world, 'mode').listen();
-    gui.add(g.cook.params, 'happy', 0,100).listen();
+    // gui.add(g.cook.params, 'happy', 0,100).listen();
     gui.add(g.customer.params, 'endurance', 0, 100).listen();
+}
+
+function hireCook() {
+    let g = game;
+    // TO가 있으면, 요리사 채용함.
+    if(world.employees.length < world.TO) {
+        // 요리사 추가
+        var cook = g.add.sprite(0.1*g.world.width, 0.1*g.world.height, 'cook');
+        cook.anchor.setTo(.5);
+        cook.params = {id: world.employID, happy: 100, state:'idle'};
+        cook.inputEnabled = true;
+        cook.events.onInputDown.add(cookWork, this);
+        cook.input.enableDrag(true);
+        
+        world.employees.push(cook);
+        world.employID += 1;
+    }
+    else {
+        // TO가 없으면? 못함
+        console.log('Not enough TO');
+    }
 }
 
 function cookWork(o, e) {
@@ -113,5 +140,4 @@ function setState(o, e) {
     var newState = map[cur][input];
     
     world.mode = Object.keys(state)[newState];
-
 }
