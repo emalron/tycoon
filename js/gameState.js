@@ -70,14 +70,16 @@ function pushCustomer() {
         console.log(id);
         
         //손님 추가
-        var customer = g.add.sprite(0.8*g.world.width-50*id, 0.6*g.world.height, 'customer');
-        customer.anchor.setTo(.5);
-        customer.inputEnabled = true;
-        customer.events.onInputDown.add(serving, this);
-        customer.params = {id: world.customID, endurance: 100};
-        
-        world.customers[id] = customer;
-        world.customID += 1;
+        if(id != -1) {
+            var customer = g.add.sprite(0.8*g.world.width-50*id, 0.6*g.world.height, 'customer');
+            customer.anchor.setTo(.5);
+            customer.inputEnabled = true;
+            customer.events.onInputDown.add(serving, this);
+            customer.params = {id: world.customID, endurance: 100};
+
+            world.customers[id] = customer;
+            world.customID += 1;
+        }
     }
 }
 
@@ -125,17 +127,6 @@ function hireCook() {
     else {
         // TO가 없으면? 못함
         console.log('Not enough TO');
-    }
-}
-
-function renderCustomer() {
-    let g = game;
-    for(var ci in world.customers) {
-        let cus = world.customers[ci];
-        
-        if(cus == 'empty') {
-            
-        }
     }
 }
 
@@ -187,11 +178,13 @@ function serving(o) {
 function findIndex(array, key) {
     for(var id in array) {
         let item = array[id];
-        if(item.params.id == key) {
-            return id;
+        if(item != 'empty') {
+            if(item.params.id == key) {
+                return id;
+            }
         }
     }
-    return -1;
+    return undefined;
 }
 
 function setState(o, e) {
