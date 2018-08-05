@@ -16,48 +16,40 @@ function create() {
     
     // draw entities
     g.background = g.add.sprite(0,0,'bg');
-    
-    // g.cook = g.add.sprite(0.3*g.world.width, 0.5*g.world.height, 'cook');
-    // g.cook.anchor.setTo(.5);
-    g.customer = g.add.sprite(0.7*g.world.width, 0.6*g.world.height, 'customer');
-    g.customer.anchor.setTo(.5);
     g.mini = g.add.sprite(0.9*g.world.width-130, 0.9*g.world.height, 'minigame');
     g.mini.anchor.setTo(.5);
     g.cooking = g.add.sprite(0.9*g.world.width, 0.9*g.world.height, 'cooking');
     g.cooking.anchor.setTo(.5);
     g.hiring = g.add.sprite(0.9*g.world.width-260, 0.9*g.world.height, 'hiring');
     g.hiring.anchor.setTo(.5);
-            
-    // set parameters
-    // g.cook.params = {happy: 100, state: 'idle'};
-    g.customer.params = {endurance: 100};
-    
+        
     // set input
-    // g.cook.inputEnabled = true;
-    // g.cook.events.onInputDown.add(cookWork, this);
-    // g.cook.input.enableDrag(true);
     g.mini.inputEnabled = true;
     g.mini.events.onInputDown.add(setState, this);
     g.cooking.inputEnabled = true;
     g.cooking.events.onInputDown.add(setState, this);
-    g.customer.inputEnabled = true;
-    g.customer.events.onInputDown.add(serving, this);
     g.hiring.inputEnabled = true;
     g.hiring.events.onInputDown.add(hireCook, this);
     
     
     // set timer event
     g.time.events.loop(1000, function() {
-        let cus = g.customer;
         
-        if(cus.params.endurance > 0) {
-            cus.params.endurance -= 5;
-        }
-        else {
-            world.fame -= 5;
-            cus.params.endurance = 100;
+        for(var ci in world.customers) {
+            let cus = world.customers[ci];
+            if(cus != 'empty') {
+                if(cus.params.endurance > 0) {
+                    cus.params.endurance -= 5;
+                }
+                else {
+                    world.fame -= 5;
+                    cus.params.endurance = 100;
+                }
+            }
         }
     })
+    
+    g.time.events.loop(3000, pushCustomer);
     
     // set dat.gui
     gui.add(world, 'money', 0, 50000).listen();
@@ -66,14 +58,60 @@ function create() {
     gui.add(world, 'food', 0, 10).listen();
     gui.add(world, 'mode').listen();
     // gui.add(g.cook.params, 'happy', 0,100).listen();
-    gui.add(g.customer.params, 'endurance', 0, 100).listen();
+    // gui.add(g.customer.params, 'endurance', 0, 100).listen();
+}
+
+function pushCustomer() {
+    let g = game;
+    // 식당 의자 수가 손님 수보다 많다면, 손님 입장 가능
+    if(getNumberOfEmpty(world.customers) > 0) {
+        // 빈자리 찾기
+        let id = findEmptyIndex(world.customers)
+        console.log(id);
+        
+        //손님 추가
+        var customer = g.add.sprite(0.8*g.world.width-50*id, 0.6*g.world.height, 'customer');
+        customer.anchor.setTo(.5);
+        customer.inputEnabled = true;
+        customer.events.onInputDown.add(serving, this);
+        customer.params = {id: world.customID, endurance: 100};
+        
+        world.customers[id] = customer;
+        world.customID += 1;
+    }
+}
+
+function getNumberOfEmpty(array) {
+    let output = 0;
+    for (var ci in array) {
+        let item = array[ci];
+        
+        if(item == 'empty') {
+            output += 1;
+        }
+    }
+    
+    console.log(output);
+    
+    return output;
+}
+
+function findEmptyIndex(array) {
+    for(var ci in array) {
+        let cus = array[ci];
+        
+        if(cus == 'empty') {
+            return ci;
+        }
+    }
 }
 
 function hireCook() {
     let g = game;
     // TO가 있으면, 요리사 채용함.
-    if(world.employees.length < world.TO) {
+    if(getNumberOfEmpty(world.employees)) {
         // 요리사 추가
+        let index = findEmptyIndex(world.employees);
         var cook = g.add.sprite(0.1*g.world.width, 0.1*g.world.height, 'cook');
         cook.anchor.setTo(.5);
         cook.params = {id: world.employID, happy: 100, state:'idle'};
@@ -81,12 +119,23 @@ function hireCook() {
         cook.events.onInputDown.add(cookWork, this);
         cook.input.enableDrag(true);
         
-        world.employees.push(cook);
+        world.employees[index] = cook;
         world.employID += 1;
     }
     else {
         // TO가 없으면? 못함
         console.log('Not enough TO');
+    }
+}
+
+function renderCustomer() {
+    let g = game;
+    for(var ci in world.customers) {
+        let cus = world.customers[ci];
+        
+        if(cus == 'empty') {
+            
+        }
     }
 }
 
@@ -121,12 +170,28 @@ function makingFood(o) {
 }
 
 function serving(o) {
+    // 음식이 준비됐다면,
     if(world.food > 0) {
+        // 자원 교환이 일어남.
         world.food -= 1;
         world.money += 10;
         world.fame += 1;
-        o.params.endurance = 100;
+        
+        // 서빙 받은 고객 퇴장
+        let id = findIndex(world.customers, o.params.id);
+        world.customers[id] = 'empty';
+        o.destroy();
     }
+}
+
+function findIndex(array, key) {
+    for(var id in array) {
+        let item = array[id];
+        if(item.params.id == key) {
+            return id;
+        }
+    }
+    return -1;
 }
 
 function setState(o, e) {
