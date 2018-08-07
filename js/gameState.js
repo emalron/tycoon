@@ -1,4 +1,4 @@
-var gameState = {create: create};
+var gameState = {create: create, update: update};
 var gui = new dat.GUI();
 
 function create() {
@@ -24,7 +24,6 @@ function create() {
     
     // set timer event
     g.time.events.loop(1000, function() {
-        
         for(var ci in world.customers) {
             let cus = world.customers[ci];
             if(cus != 'empty') {
@@ -51,12 +50,23 @@ function create() {
     // gui.add(g.customer.params, 'endurance', 0, 100).listen();
 }
 
+function update() {
+    if(world.fame <= 0) {
+        game.time.events.add(4000, function() {
+            game.state.start('homeState', true, false, 'GAME over');
+        })
+    }
+    if(world.fame > 0 && world.money >= 10100) {
+        game.state.start('homeState', true, false, 'Winner winner chicken dinner');
+    }
+}
+
 function pushCustomer() {
     let g = game;
     // 식당 의자 수가 손님 수보다 많다면, 손님 입장 가능
     if(getNumberOfEmpty(world.customers) > 0) {
         // 빈자리 찾기
-        let id = findEmptyIndex(world.customers)
+        let id = world.customers.findEmptyIndex();
         console.log(id);
         
         //손님 추가
@@ -81,29 +91,17 @@ function getNumberOfEmpty(array) {
         if(item == 'empty') {
             output += 1;
         }
-    }
-    
-    console.log(output);
-    
+    }    
     return output;
 }
 
-function findEmptyIndex(array) {
-    for(var ci in array) {
-        let cus = array[ci];
-        
-        if(cus == 'empty') {
-            return ci;
-        }
-    }
-}
 
 function hireCook() {
     let g = game;
     // TO가 있으면, 요리사 채용함.
     if(getNumberOfEmpty(world.employees)) {
         // 요리사 추가
-        let index = findEmptyIndex(world.employees);
+        let index = world.employees.findEmptyIndex();
         var cook = g.add.sprite(0.1*g.world.width, 0.1*g.world.height, 'cook');
         cook.anchor.setTo(.5);
         cook.params = {id: world.employID, happy: 100, state:'idle'};
@@ -159,23 +157,12 @@ function serving(o) {
         world.fame += 1;
         
         // 서빙 받은 고객 퇴장
-        let id = findIndex(world.customers, o.params.id);
+        let id = world.customers.findIndex(o.params.id);
         world.customers[id] = 'empty';
         o.destroy();
     }
 }
 
-function findIndex(array, key) {
-    for(var id in array) {
-        let item = array[id];
-        if(item != 'empty') {
-            if(item.params.id == key) {
-                return id;
-            }
-        }
-    }
-    return undefined;
-}
 
 function setState(o, e) {
     let state = {'idle': 0, 'minigame':1, 'cooking':2};
