@@ -39,15 +39,6 @@ function create() {
     })
     
     g.time.events.loop(3000, pushCustomer);
-    
-    // set dat.gui
-    gui.add(world, 'money', 0, 50000).listen();
-    gui.add(world, 'fame', 0, 200).listen();
-    gui.add(world, 'ingredient', 0, 10000).listen();
-    gui.add(world, 'food', 0, 10).listen();
-    gui.add(world, 'mode').listen();
-    // gui.add(g.cook.params, 'happy', 0,100).listen();
-    // gui.add(g.customer.params, 'endurance', 0, 100).listen();
 }
 
 function update() {

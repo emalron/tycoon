@@ -32,4 +32,7 @@ function createH() {
         let msg2 = g.add.text(g.world.centerX, g.world.centerY, g.gameOverMsg, style2);
         msg2.anchor.setTo(.5);
     }
+    
+    // reset properties
+    copyProperties(buffer, world);
 }
