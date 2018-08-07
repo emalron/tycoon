@@ -14,6 +14,8 @@ function preloadP() {
     g.load.image('minigame', 'assets/images/button1.png');
     g.load.image('cooking', 'assets/images/button2.png');
     g.load.image('hiring', 'assets/images/button3.png');
+    g.load.image('buying', 'assets/images/button4.png');
+    g.load.image('toy', 'assets/images/toy.png');
 }
 
 var buffer = {};
