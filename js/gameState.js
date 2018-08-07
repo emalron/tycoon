@@ -5,21 +5,26 @@ function create() {
     let g = game;
     
     // draw entities
-    g.background = g.add.sprite(0,0,'bg');
-    g.mini = g.add.sprite(0.9*g.world.width-130, 0.9*g.world.height, 'minigame');
-    g.mini.anchor.setTo(.5);
-    g.cooking = g.add.sprite(0.9*g.world.width, 0.9*g.world.height, 'cooking');
-    g.cooking.anchor.setTo(.5);
-    g.hiring = g.add.sprite(0.9*g.world.width-260, 0.9*g.world.height, 'hiring');
-    g.hiring.anchor.setTo(.5);
+    var background = g.add.sprite(0,0,'bg');
+    var mini = g.add.sprite(0.9*g.world.width-120, 0.9*g.world.height, 'minigame');
+    mini.anchor.setTo(.5);
+    var cooking = g.add.sprite(0.9*g.world.width, 0.9*g.world.height, 'cooking');
+    cooking.anchor.setTo(.5);
+    var hiring = g.add.sprite(0.9*g.world.width-240, 0.9*g.world.height, 'hiring');
+    hiring.anchor.setTo(.5);
+    var buying = g.add.sprite(0.9*g.world.width-360, 0.9*g.world.height, 'buying');
+    buying.anchor.setTo(.5);
+    
         
     // set input
-    g.mini.inputEnabled = true;
-    g.mini.events.onInputDown.add(setState, this);
-    g.cooking.inputEnabled = true;
-    g.cooking.events.onInputDown.add(setState, this);
-    g.hiring.inputEnabled = true;
-    g.hiring.events.onInputDown.add(hireCook, this);
+    mini.inputEnabled = true;
+    mini.events.onInputDown.add(setState, this);
+    cooking.inputEnabled = true;
+    cooking.events.onInputDown.add(setState, this);
+    hiring.inputEnabled = true;
+    hiring.events.onInputDown.add(hireCook, this);
+    buying.inputEnabled = true;
+    buying.events.onInputDown.add(buyingToy, this);
     
     
     // set timer event
@@ -92,13 +97,14 @@ function hireCook() {
     // TO가 있으면, 요리사 채용함.
     if(getNumberOfEmpty(world.employees)) {
         // 요리사 추가
+        var rng = Math.floor(Math.random()*20)
         let index = world.employees.findEmptyIndex();
-        var cook = g.add.sprite(0.1*g.world.width, 0.1*g.world.height, 'cook');
+        var cook = g.add.sprite(0.1*g.world.width+rng, 0.1*g.world.height+rng, 'cook');
         cook.anchor.setTo(.5);
         cook.params = {id: world.employID, happy: 100, state:'idle'};
         cook.inputEnabled = true;
         cook.events.onInputDown.add(cookWork, this);
-        cook.input.enableDrag(true);
+        cook.input.enableDrag();
         
         world.employees[index] = cook;
         world.employID += 1;
@@ -106,6 +112,19 @@ function hireCook() {
     else {
         // TO가 없으면? 못함
         console.log('Not enough TO');
+    }
+}
+
+function buyingToy() {
+    let g = game;
+    if(world.money >= 500 && world.toys < 4) {
+        world.money -= 500;
+        world.toys += 1;
+        var rng = Math.floor(Math.random()*20)
+        var toy = g.add.sprite(g.world.centerX+rng, g.world.centerY+rng, 'toy');
+        toy.anchor.setTo(.5);
+        toy.inputEnabled = true;
+        toy.input.enableDrag();
     }
 }
 
