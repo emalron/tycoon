@@ -16,9 +16,41 @@ function preloadP() {
     g.load.image('hiring', 'assets/images/button3.png');
 }
 
+var buffer = {};
+
 function createP() {
     // home state 불러오는 곳
     let g = game;
     
+    // set dat.gui
+    gui.add(world, 'money', 0, 50000).listen();
+    gui.add(world, 'fame', 0, 200).listen();
+    gui.add(world, 'ingredient', 0, 10000).listen();
+    gui.add(world, 'food', 0, 10).listen();
+    gui.add(world, 'mode').listen();
+    // gui.add(g.cook.params, 'happy', 0,100).listen();
+    // gui.add(g.customer.params, 'endurance', 0, 100).listen();
+    
+    copyProperties(world, buffer);
+    console.log(buffer);
+    
     g.state.start('homeState');
+}
+
+function copyProperties(input, output) {
+    // copy from a to b
+    for(var prop in input) {
+        if (Array.isArray(input[prop])) {
+            var res= [];
+            for(var i in input[prop]) {
+                res[i] = input[prop][i];
+            }
+            console.log(res);
+            output[prop] = res;
+        }
+        else {
+            let value = input[prop];
+            output[prop] = value;
+        }        
+    }
 }
