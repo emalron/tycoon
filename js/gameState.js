@@ -43,17 +43,43 @@ function create() {
         }
     })
     
+    g.time.events.loop(1000, function() {
+        for(var ci in world.employees) {
+            let cus = world.employees[ci];
+            if(cus != 'empty' && cus.params.state == 'idle' && cus.params.happy < 100-world.toys) {
+                
+                console.log(cus.params.id + " is healed");
+                cus.params.happy += world.toys;
+            }
+        }
+    })
+    
     g.time.events.loop(3000, pushCustomer);
 }
 
 function update() {
+    // losing condition
     if(world.fame <= 0) {
         game.time.events.add(4000, function() {
             game.state.start('homeState', true, false, 'GAME over');
         })
     }
+    // winning condition
     if(world.fame > 0 && world.money >= 10100) {
         game.state.start('homeState', true, false, 'Winner winner chicken dinner');
+    }
+    // happy condition
+    for(var ci in world.employees) {
+        let cus = world.employees[ci];
+        
+        if(cus != 'empty' && cus.params.happy < 10) {
+            // 퇴직금
+            world.money -= 1000;
+            
+            // 퇴사처리
+            world.employees[ci] = 'empty';
+            cus.destroy();
+        }
     }
 }
 
@@ -155,6 +181,7 @@ function makingFood(o) {
     if(world.ingredient >= 10) {
         world.ingredient -= 10;
         world.food += 1;
+        o.params.happy -= 10;
     }
 }
 
