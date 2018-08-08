@@ -182,6 +182,11 @@ function makingFood(o) {
         world.ingredient -= 10;
         world.food += 1;
         o.params.happy -= 10;
+        
+        // now cooks get red when they lose their happiness.
+        var num = Math.floor(10*(100-o.params.happy)/100);
+        var map = [0xffffff, 0xffe5e7, 0xffcccc, 0xffb2b2, 0xff9999, 0xff7f7f, 0xff6666, 0xff4c4c, 0xff3333, 0xff3333, 0xff1919, 0xff0000];
+        o.tint = map[num];
     }
 }
 
