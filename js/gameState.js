@@ -173,17 +173,29 @@ function cookWork(o, e) {
 
 function findIngredient(o) {
     if(o.params.happy >= 10) {
-        world.ingredient += 20;
+        let rng = Math.random();
+        if(rng >= 0.5) {
+            world.ingredient1 += 10;
+        }
+        else {
+            world.ingredient2 += 10;
+        }
         changeHappy(o, -10);
     }
 }
 
 function makingFood(o) {
-    if(world.ingredient >= 10) {
-        world.ingredient -= 10;
-        world.food += 1;
-        changeHappy(o, -10);
+    // 일단 재료가 있으면 있는 만큼 만들기로 함.
+    // 이후에는 주문큐로 해결함.
+    if(world.ingredient1 >= 10) {
+        world.ingredient1 -= 10;
+        world.food1 += 1;
     }
+    if(world.ingredient2 >= 10) {
+        world.ingredient2 -= 10;
+        world.food2 += 1;
+    }
+    changeHappy(o, -10);
 }
 
 function changeHappy(o, val) {

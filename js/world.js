@@ -1,8 +1,10 @@
 var world = {
     money: 10000,
-    ingredient: 1000,
+    ingredient1: 0,
+    ingredient2: 0,
     mode: 'idle',
-    food: 0,
+    food1: 0,
+    food2: 0,
     fame: 100,
     TO: 4,
     employees: ['empty', 'empty','empty','empty'],
