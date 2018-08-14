@@ -120,6 +120,7 @@ function getNumberOfEmpty(array) {
 
 function hireCook() {
     let g = game;
+    world.mode = 'idle';
     // TO가 있으면, 요리사 채용함.
     if(getNumberOfEmpty(world.employees)) {
         // 요리사 추가
