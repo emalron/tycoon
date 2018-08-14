@@ -49,7 +49,7 @@ function create() {
             if(cus != 'empty' && cus.params.state == 'idle' && cus.params.happy < 100-world.toys) {
                 
                 console.log(cus.params.id + " is healed");
-                cus.params.happy += world.toys;
+                changeHappy(cus, world.toys);
             }
         }
     })
@@ -172,8 +172,8 @@ function cookWork(o, e) {
 
 function findIngredient(o) {
     if(o.params.happy >= 10) {
-        o.params.happy -= 10;
         world.ingredient += 20;
+        changeHappy(o, -10);
     }
 }
 
@@ -181,9 +181,14 @@ function makingFood(o) {
     if(world.ingredient >= 10) {
         world.ingredient -= 10;
         world.food += 1;
-        o.params.happy -= 10;
+        changeHappy(o, -10);
+    }
+}
+
+function changeHappy(o, val) {
+    if(o) {
+        o.params.happy += val;
         
-        // now cooks get red when they lose their happiness.
         var num = Math.floor(10*(100-o.params.happy)/100);
         var map = [0xffffff, 0xffe5e7, 0xffcccc, 0xffb2b2, 0xff9999, 0xff7f7f, 0xff6666, 0xff4c4c, 0xff3333, 0xff3333, 0xff1919, 0xff0000];
         o.tint = map[num];
