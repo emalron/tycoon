@@ -81,6 +81,20 @@ function update() {
             cus.destroy();
         }
     }
+    
+    // endurance check
+    for(var ci in world.customers) {
+        let cus = world.customers[ci];
+        
+        if(cus != 'empty' && cus.params.endurance < 10) {
+            // fame 하락
+            world.fame -= 20;
+            
+            // 손님 퇴장
+            world.customers[ci] = 'empty';
+            cus.destroy();
+        }
+    }
 }
 
 function pushCustomer() {
@@ -101,8 +115,23 @@ function pushCustomer() {
 
             world.customers[id] = customer;
             world.customID += 1;
+            
+            // place order
+            placeOrder(customer);
         }
     }
+}
+
+function placeOrder(o) {
+    // select random food
+    let rng = Math.floor(10*Math.random())%2+1;
+    
+    // making a bill    
+    let bill = {name: "food"+rng, customer: o};
+    console.log(bill);
+    
+    // add food into orders queue
+    world.orders.push(bill);
 }
 
 function getNumberOfEmpty(array) {
@@ -190,12 +219,13 @@ function makingFood(o) {
     if(world.ingredient1 >= 10) {
         world.ingredient1 -= 10;
         world.food1 += 1;
+        changeHappy(o, -10);
     }
     if(world.ingredient2 >= 10) {
         world.ingredient2 -= 10;
         world.food2 += 1;
+        changeHappy(o, -10);
     }
-    changeHappy(o, -10);
 }
 
 function changeHappy(o, val) {
@@ -210,9 +240,24 @@ function changeHappy(o, val) {
 
 function serving(o) {
     // 음식이 준비됐다면,
-    if(world.food > 0) {
+    let id = world.customers.findIndex(o.params.id);
+    let oid = function(key) {
+        for(var i in world.orders) {
+            let cus = world.orders[i].customer;
+            if(cus.params.id == key) {
+                return i;
+            }
+        }
+        return -1;
+    }(id);
+    
+    console.log('oid: ' + oid);
+    var bill = world.orders[oid];
+    console.log(bill);
+    
+    if(oid != -1 && world[bill.name] > 0) {
         // 자원 교환이 일어남.
-        world.food -= 1;
+        world[bill.name] -= 1;
         world.money += 10;
         world.fame += 1;
         
