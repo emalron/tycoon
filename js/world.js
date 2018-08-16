@@ -12,8 +12,7 @@ var world = {
     chairs: 4,
     customers: ['empty', 'empty', 'empty', 'empty'],
     customID: 0,
-    toys: 0,
-    orders: []
+    toys: 0
 }
 
 Array.prototype.findIndex = function(key) {

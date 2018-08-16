@@ -127,11 +127,8 @@ function placeOrder(o) {
     let rng = Math.floor(10*Math.random())%2+1;
     
     // making a bill    
-    let bill = {name: "food"+rng, customer: o};
-    console.log(bill);
-    
-    // add food into orders queue
-    world.orders.push(bill);
+    o.params.bill = "food" + rng;
+    console.log(o.params);
 }
 
 function getNumberOfEmpty(array) {
@@ -240,24 +237,12 @@ function changeHappy(o, val) {
 
 function serving(o) {
     // 음식이 준비됐다면,
-    let id = world.customers.findIndex(o.params.id);
-    let oid = function(key) {
-        for(var i in world.orders) {
-            let cus = world.orders[i].customer;
-            if(cus.params.id == key) {
-                return i;
-            }
-        }
-        return -1;
-    }(id);
-    
-    console.log('oid: ' + oid);
-    var bill = world.orders[oid];
+    var bill = o.params.bill;
     console.log(bill);
     
-    if(oid != -1 && world[bill.name] > 0) {
+    if(world[bill] > 0) {
         // 자원 교환이 일어남.
-        world[bill.name] -= 1;
+        world[bill] -= 1;
         world.money += 10;
         world.fame += 1;
         
