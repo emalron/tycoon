@@ -126,6 +126,8 @@ function payWage() {
     if(world.week % 4 == 0) {
         world.money -= 100*num;
     }
+    // rent = 1000
+    world.money -= 1000;
 }
 
 function pushCustomer() {
