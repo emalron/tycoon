@@ -55,11 +55,17 @@ function create() {
     })
     
     g.time.events.loop(3000, pushCustomer);
+    
+    g.time.events.loop(1000*60*1, payWage);
+    
+    // 날짜 표시 TEXT UI 추가
+    let style = {font: '18px arial', fill:'#f00'}
+    g.week = g.add.text(0.85*g.world.width, 0.05*g.world.height, "Week: ###", style);
 }
 
 function update() {
     // losing condition
-    if(world.fame <= 0) {
+    if(world.fame <= 0 || world.money <= 0) {
         game.time.events.add(4000, function() {
             game.state.start('homeState', true, false, 'GAME over');
         })
@@ -94,6 +100,31 @@ function update() {
             world.customers[ci] = 'empty';
             cus.destroy();
         }
+    }
+    
+    
+}
+
+function payWage() {
+    // display week
+    world.week += 1;
+    game.week.text = "Week: " + world.week;
+    
+    // get the number of customer
+    let num = function() {
+        let res = 0;
+        for(var n in world.employees) {
+            var cus = world.employees[n];
+            if(cus != 'empty') {
+                res += 1;
+            }
+        }
+        return res;
+    }();
+    
+    // wage = 100 per month;
+    if(world.week % 4 == 0) {
+        world.money -= 100*num;
     }
 }
 
